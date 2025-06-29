@@ -16,10 +16,4 @@ with DAG(
         python_callable=download_data_json
     )
 
-    # t2 = PythonOperator(
-    #     task_id="clean_data",
-    #     python_callable=clean_data
-    # )
-
     t1
-    # t1 >> t2
