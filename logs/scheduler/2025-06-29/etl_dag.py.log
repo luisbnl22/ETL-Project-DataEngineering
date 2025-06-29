@@ -1076,3 +1076,10 @@ ModuleNotFoundError: No module named 'download_data_json'
 [2025-06-29T18:05:52.677+0000] {logging_mixin.py:188} INFO - [2025-06-29T18:05:52.677+0000] {dag.py:3036} INFO - Sync 1 DAGs
 [2025-06-29T18:05:52.702+0000] {logging_mixin.py:188} INFO - [2025-06-29T18:05:52.702+0000] {dag.py:3823} INFO - Setting next_dagrun for daily_crashes_import to 2025-06-29 00:00:00+00:00, run_after=2025-06-30 00:00:00+00:00
 [2025-06-29T18:05:52.730+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/etl_dag.py took 0.120 seconds
+[2025-06-29T18:06:54.612+0000] {processor.py:161} INFO - Started process (PID=264) to work on /opt/airflow/dags/etl_dag.py
+[2025-06-29T18:06:54.613+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/etl_dag.py for tasks to queue
+[2025-06-29T18:06:54.614+0000] {logging_mixin.py:188} INFO - [2025-06-29T18:06:54.614+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/etl_dag.py
+[2025-06-29T18:06:54.647+0000] {processor.py:840} INFO - DAG(s) 'daily_crashes_import' retrieved from /opt/airflow/dags/etl_dag.py
+[2025-06-29T18:06:54.675+0000] {logging_mixin.py:188} INFO - [2025-06-29T18:06:54.675+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2025-06-29T18:06:54.700+0000] {logging_mixin.py:188} INFO - [2025-06-29T18:06:54.700+0000] {dag.py:3823} INFO - Setting next_dagrun for daily_crashes_import to 2025-06-29 00:00:00+00:00, run_after=2025-06-30 00:00:00+00:00
+[2025-06-29T18:06:54.729+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/etl_dag.py took 0.121 seconds
