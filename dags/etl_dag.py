@@ -1,20 +1,16 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from scripts.download_data_json import download_data_json
 from datetime import datetime, timedelta
-from etl.download_data_json import download_data_json
-#from etl.transform import clean_data
+import requests
+import os
+import json
+import datetime as dt
 
-default_args = {
-    'owner': 'airflow',
-    'depends_on_past': False,
-    'retries': 1,
-    'retry_delay': timedelta(minutes=5),
-    'email_on_failure': False,
-}
+
 
 with DAG(
     dag_id="daily_crashes_import",
-    default_args=default_args,
     start_date=datetime(2025, 6, 1),
     schedule_interval="@daily",
     catchup=False,
@@ -23,7 +19,7 @@ with DAG(
 
     t1 = PythonOperator(
         task_id="download_data_json",
-        python_callable=download_data_json
+        python_callable=download_data_json       
     )
 
     # Add more tasks and dependencies as needed

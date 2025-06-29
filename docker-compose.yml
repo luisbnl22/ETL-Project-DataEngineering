@@ -7,30 +7,72 @@ services:
       POSTGRES_USER: airflow
       POSTGRES_PASSWORD: airflow
       POSTGRES_DB: airflow
+    # Optional: Persist data for the database
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    restart: always # Keep the database running
+
+  # This service initializes the Airflow database and creates an admin user.
+  # It should be run *once* before starting other Airflow services.
+  # airflow-init:
+  #   image: apache/airflow:2.8.1
+  #   depends_on:
+  #     - postgres
+  #   environment:
+  #     AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+  #     AIRFLOW__WEBSERVER__SECRET_KEY: supersecretkey # Needed for init to create admin
+  #     # AIRFLOW_UID: ${AIRFLOW_UID:-50000} # Uncomment if you use .env for AIRFLOW_UID
+  #   # Ensure these directories exist on your host: ./dags, ./logs, ./plugins
+  #   volumes:
+  #     - ./dags:/opt/airflow/dags
+  #     - ./logs:/opt/airflow/logs
+  #     - ./plugins:/opt/airflow/plugins
+  #     - ./etl:/opt/airflow/etl # Your custom ETL volume
+  #   command: bash -c "airflow db migrate && airflow users create --username airflow --password airflow --firstname Airflow --lastname Admin --role Admin --email admin@example.com"
+  #   # Note: Using `db migrate` instead of `db init` is generally preferred for upgrades.
+  #   # `db init` implicitly includes migrate, but migrate is more precise for schema setup.
+  #   # This container is designed to run and then exit. It does not need `restart: always`.
 
   airflow-webserver:
     image: apache/airflow:2.8.1
     depends_on:
       - postgres
+      # - airflow-init # This dependency is implied by the execution order (run airflow-init first manually)
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
       AIRFLOW__WEBSERVER__SECRET_KEY: supersecretkey
+      # AIRFLOW_UID: ${AIRFLOW_UID:-50000} # Uncomment if you use .env for AIRFLOW_UID
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'False' # Set to 'True' to load example DAGs
     ports:
       - "8080:8080"
     volumes:
       - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
       - ./etl:/opt/airflow/etl
+      - ./data:/opt/airflow/data
     command: webserver
+    restart: always # Keep the webserver running
 
   airflow-scheduler:
     image: apache/airflow:2.8.1
     depends_on:
-      - airflow-webserver
+      - postgres
+      # - airflow-webserver # Scheduler does not strictly depend on webserver being up
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      # AIRFLOW_UID: ${AIRFLOW_UID:-50000} # Uncomment if you use .env for AIRFLOW_UID
     volumes:
       - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
       - ./etl:/opt/airflow/etl
+      - ./data:/opt/airflow/data
     command: scheduler
+    restart: always # Keep the scheduler running
+
+# Define volumes for persistent data
+volumes:
+  pg_data:

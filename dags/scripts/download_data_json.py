@@ -6,7 +6,7 @@ import datetime as dt
 def save_json(json_file):
     date_str = dt.datetime.today().strftime("%Y-%m-%d")
 
-    with open(f'/data/extraction_{date_str}.json', 'w') as f:
+    with open(f'/opt/airflow/data/extraction_{date_str}.json', 'w') as f:
         json.dump(json_file, f)
 
 
@@ -24,4 +24,3 @@ def download_data_json():
     data = response.json()
 
     save_json(data)
-
