@@ -4,11 +4,21 @@ from datetime import datetime, timedelta
 from etl.download_data_json import download_data_json
 #from etl.transform import clean_data
 
+default_args = {
+    'owner': 'airflow',
+    'depends_on_past': False,
+    'retries': 1,
+    'retry_delay': timedelta(minutes=5),
+    'email_on_failure': False,
+}
+
 with DAG(
     dag_id="daily_crashes_import",
-    start_date=datetime(2024, 1, 1),
+    default_args=default_args,
+    start_date=datetime(2025, 6, 1),
     schedule_interval="@daily",
-    catchup=False
+    catchup=False,
+    description="DAG to download daily crash data in JSON format"
 ) as dag:
 
     t1 = PythonOperator(
@@ -16,4 +26,5 @@ with DAG(
         python_callable=download_data_json
     )
 
-    t1
+    # Add more tasks and dependencies as needed
+    # Example: t1 >> t2
