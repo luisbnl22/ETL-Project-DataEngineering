@@ -21,4 +21,5 @@ with DAG(
     #     python_callable=clean_data
     # )
 
+    t1
     # t1 >> t2
