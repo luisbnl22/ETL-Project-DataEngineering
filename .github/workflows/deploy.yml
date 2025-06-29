@@ -1,0 +1,32 @@
+name: Deploy Airflow to Remote VM
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:k
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Copy files to VM
+        uses: appleboy/scp-action@v0.1.1
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "."
+          target: "~/airflow-etl-project"
+
+      - name: Restart Airflow (docker-compose)
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd ~/airflow-etl-project
+            docker-compose down
+            docker-compose up -d

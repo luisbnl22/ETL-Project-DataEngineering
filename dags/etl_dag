@@ -1,0 +1,24 @@
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+from datetime import datetime, timedelta
+from etl.extract import download_data_json
+from etl.transform import clean_data
+
+with DAG(
+    dag_id="daily_crashes_import",
+    start_date=datetime(2024, 1, 1),
+    schedule_interval="@daily",
+    catchup=False
+) as dag:
+
+    t1 = PythonOperator(
+        task_id="download_data_json",
+        python_callable=download_data_json
+    )
+
+    # t2 = PythonOperator(
+    #     task_id="clean_data",
+    #     python_callable=clean_data
+    # )
+
+    # t1 >> t2
